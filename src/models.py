@@ -8,47 +8,51 @@ from eralchemy import render_er
 
 Base = declarative_base()
 
+
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
-    username = Column(String(250), unique=True)
-    password = Column(String(250), unique=True)
-    planetssave = Column(Integer, ForeignKey('favorites.planets'))
-    peoplesave = Column(Integer, ForeignKey('favorites.people'))
-    vehiclesave = Column(Integer, ForeignKey('favorites.vehicles'))
+    username = Column(String(120), unique=True)
+    password = Column(String(120), unique=True)
+
+class Favorites(Base):
+    __tablename__ = 'favorites'
+    id_fav = Column(Integer, primary_key=True)
+    planet_fav = Column(String(255), nullable=False)
+    people_fav = Column(String(255), nullable=False)
+    vehicles_fav = Column(String(255), nullable=False)
+    iduser = Column(Integer, ForeignKey('user.id'))
+    userfavorites =  relationship(User)
 
 class People(Base):
     __tablename__ = 'people'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-    planets = Column(Integer, ForeignKey('planets.id')) 
+    name = Column(String(120), nullable=False)
+    homeworld = Column(Integer, ForeignKey('planet.id'))
+    favorites = Column(Integer, ForeignKey('favorites.people_fav'))
     user = relationship(User)
 
 class Vehicles(Base):
     __tablename__ = 'vehicles'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
-    model = Column(String(250), nullable=False)
-    manufacturer = Column(String(250), nullable=False)
-    owner = Column(Integer, ForeignKey('people.id'))
+    name = Column(String(120), nullable=False)
+    model = Column(String(120), nullable=False)
+    manufacturer = Column(String(120), nullable=False)
+    pilots = Column(Integer, ForeignKey('people.id'))
+    favorites = Column(Integer, ForeignKey('favorites.vehicles_fav'))
     user = relationship(User)
 
-class Planets(Base):
-    __tablename__ = 'planets'
+class Planet(Base):
+    __tablename__ = 'planet'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    name = Column(String(80), nullable=False)
     people = Column(Integer, ForeignKey('people.id'))
     density = Column(Integer)
     gravity = Column(Integer)
+    favorites = Column(Integer, ForeignKey('favorites.planet_fav'))
     user = relationship(User)
 
-class Favorites(Base):
-    __tablename__ = 'favorites'
-    iduser = Column(Integer, ForeignKey('user.id'))
-    planets = Column(String(250), nullable=False)
-    people = Column(String(250), nullable=False)
-    vehicles = Column(String(250), nullable=False)
-    userfavorites =  relationship(User)
+
 
 
 
